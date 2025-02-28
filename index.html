@@ -11,6 +11,20 @@
             background-color: #222;
             color: white;
         }
+        .container {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh; /* Make it take full viewport height */
+        }
+        #field {
+            width: 300px;
+            height: 300px;
+            border: 2px solid white;
+            background-color: black;
+            position: relative;
+            overflow: hidden;
+        }
         #field {
             position: relative;
             margin: 20px auto;
@@ -37,12 +51,15 @@
     </style>
 </head>
 <body>
+    <div class="container">
     <h1>Chaotic Energy Field Simulation</h1>
     <p>This is a simulation of a highly unstable process unfolding a chaotic energy field. The process involves two types of particles: maize and blue. In each time unit, either two maize paryicles combine to form one blue particle, or one blue particle destabilizes and transforms into one maize particle. This process halts when no more reactions are possible.</p>
     <button onclick="startSimulation()">Start Simulation</button>
     <button onclick="resetSimulation()">Reset</button>
     <div id="field"></div>
-    <p id="status"></p>
+    <p id="status"></p>       
+    </div>
+
 
     <script>
         let maizeParticles = [];
@@ -96,7 +113,7 @@
             if (blueParticles.length >= 1) possibleReactions.push('decay');
             
             if (possibleReactions.length === 0) {
-                document.getElementById('status').innerText = 'Process Halted! No more reactions possible.';
+                document.getElementById('status').innerText = 'Process halted! No more reactions possible.';
                 running = false;
                 return;
             }
