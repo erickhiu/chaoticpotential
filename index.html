@@ -33,6 +33,9 @@
             background-color: black;
             overflow: hidden;
         }
+        #status {
+            text-align: center;
+        }
         .particle {
             position: absolute;
             width: 20px;
@@ -52,7 +55,7 @@
 <body>
 
     <h1>Chaotic Energy Field Simulation</h1>
-    <p>This is a simulation of a highly unstable process unfolding a chaotic energy field. The process involves two types of particles: maize and blue. In each time unit, either two maize paryicles combine to form one blue particle, or one blue particle destabilizes and transforms into one maize particle. This process halts when no more reactions are possible.</p>
+    <p>This is a simulation of a highly unstable process unfolding a chaotic energy field. The process involves two types of particles: maize and blue. In each time unit, either two maize particles combine to form one blue particle, or one blue particle destabilizes and transforms into one maize particle. This process halts when no more reactions are possible.</p>
     <button onclick="startSimulation()">Start Simulation</button>
     <button onclick="resetSimulation()">Reset</button>
     <div id="field"></div>
