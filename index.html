@@ -1,0 +1,149 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Chaotic Energy Field Simulation</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            background-color: #222;
+            color: white;
+        }
+        #field {
+            position: relative;
+            margin: 20px auto;
+            width: 300px;
+            height: 300px;
+            border: 2px solid white;
+            background-color: black;
+            overflow: hidden;
+        }
+        .particle {
+            position: absolute;
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+        }
+        .maize { background-color: yellow; }
+        .blue { background-color: blue; }
+        button {
+            margin: 10px;
+            padding: 10px;
+            font-size: 16px;
+            cursor: pointer;
+        }
+    </style>
+</head>
+<body>
+    <h1>Chaotic Energy Field Simulation</h1>
+    <button onclick="startSimulation()">Start Simulation</button>
+    <button onclick="resetSimulation()">Reset</button>
+    <div id="field"></div>
+    <p id="status"></p>
+
+    <script>
+        let maizeParticles = [];
+        let blueParticles = [];
+        let running = false;
+
+        function createParticles() {
+            maizeParticles = Array.from({ length: 10 }, () => createParticle('maize'));
+            blueParticles = Array.from({ length: 5 }, () => createParticle('blue'));
+        }
+
+        function createParticle(type, x = null, y = null) {
+            const div = document.createElement('div');
+            div.className = `particle ${type}`;
+            document.getElementById('field').appendChild(div);
+            if (x === null || y === null) {
+                setRandomPosition(div, false);
+            } else {
+                div.style.transform = `translate(${x}px, ${y}px)`;
+            }
+            return div;
+        }
+
+        function setRandomPosition(element, animate = true) {
+            const field = document.getElementById('field');
+            const x = Math.random() * (field.clientWidth - 20);
+            const y = Math.random() * (field.clientHeight - 20);
+            if (animate) {
+                element.style.transition = 'transform 0.5s linear';
+            } else {
+                element.style.transition = 'none';
+            }
+            element.style.transform = `translate(${x}px, ${y}px)`;
+        }
+
+        function getPosition(element) {
+            const transform = element.style.transform;
+            const match = transform.match(/translate\((\d+\.?\d*)px, (\d+\.?\d*)px\)/);
+            return match ? [parseFloat(match[1]), parseFloat(match[2])] : [0, 0];
+        }
+
+        function moveParticles() {
+            [...maizeParticles, ...blueParticles].forEach(p => setRandomPosition(p, true));
+        }
+
+        function simulateStep() {
+            if (!running) return;
+            
+            let possibleReactions = [];
+            if (maizeParticles.length >= 2) possibleReactions.push('fusion');
+            if (blueParticles.length >= 1) possibleReactions.push('decay');
+            
+            if (possibleReactions.length === 0) {
+                document.getElementById('status').innerText = 'Process Halted! No more reactions possible.';
+                running = false;
+                return;
+            }
+            
+            let reaction = possibleReactions[Math.floor(Math.random() * possibleReactions.length)];
+            if (reaction === 'fusion') {
+                if (maizeParticles.length >= 2) {
+                    let p1 = maizeParticles.shift();
+                    let p2 = maizeParticles.shift();
+                    let [x1, y1] = getPosition(p1);
+                    let [x2, y2] = getPosition(p2);
+                    p1.remove();
+                    p2.remove();
+                    
+                    let midX = (x1 + x2) / 2;
+                    let midY = (y1 + y2) / 2;
+                    let newParticle = createParticle('blue', midX, midY);
+                    blueParticles.push(newParticle);
+                }
+            } else if (reaction === 'decay') {
+                if (blueParticles.length > 0) {
+                    let p = blueParticles.shift();
+                    let [x, y] = getPosition(p);
+                    p.remove();
+                    let newParticle = createParticle('maize', x, y);
+                    maizeParticles.push(newParticle);
+                }
+            }
+            
+            moveParticles();
+            setTimeout(simulateStep, 500);
+        }
+
+        function startSimulation() {
+            if (running) return;
+            running = true;
+            document.getElementById('status').innerText = 'Simulating...';
+            simulateStep();
+        }
+
+        function resetSimulation() {
+            running = false;
+            document.getElementById('field').innerHTML = '';
+            document.getElementById('status').innerText = '';
+            createParticles();
+        }
+
+        createParticles();
+    </script>
+</body>
+</html>
